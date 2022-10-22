@@ -1,50 +1,45 @@
-import React, { Component } from "react"
-import logo from "./logo.svg"
-import "./App.css"
+import './App.css';
+import React,{useState} from 'react';
+import Navbar from './component/Navbar.js';
+// import About from './component/About.js';
+import TextForm from './component/TextForm';
+import Alert from './component/Alert';
+function App() {
+  const [mode, setMode] = useState('light');
+  const [alert,setAlert] = useState(null);
 
-class LambdaDemo extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { loading: false, msg: null }
+  const showalert = (msg,type)=>{
+    setAlert({
+      msg,
+      type,
+    })
+    setTimeout(()=>{
+      setAlert(null);
+    },2000);
   }
-
-  handleClick = api => e => {
-    e.preventDefault()
-
-    this.setState({ loading: true })
-    fetch("/.netlify/functions/" + api)
-      .then(response => response.json())
-      .then(json => this.setState({ loading: false, msg: json.msg }))
+  const tgmod = ()=>{
+    if(mode==='light'){
+      setMode("dark");
+      document.body.style.backgroundColor="#6B6B6B";
+      showalert("Dark Mode Is Enabled","success");
+    }else{
+      setMode("light");
+      document.body.style.backgroundColor="white";
+      showalert("Light Mode Is Enabled","success");
+    }
   }
+  console.log(alert)
+  return (
+    <>
+    <Navbar title="TextUtils" mode={mode} tgmod={tgmod}/>
+    <Alert alert={alert}/>
+    <div className="container">
 
-  render() {
-    const { loading, msg } = this.state
-
-    return (
-      <p>
-        <button onClick={this.handleClick("hello")}>{loading ? "Loading..." : "Call Lambda"}</button>
-        <button onClick={this.handleClick("async-dadjoke")}>{loading ? "Loading..." : "Call Async Lambda"}</button>
-        <br />
-        <span>{msg}</span>
-      </p>
-    )
-  }
+      <TextForm showalert={showalert} heading="Enter the text" mode={mode}/>
+      {/* <About/> */}
+    </div>
+    </>
+  );
 }
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <LambdaDemo />
-        </header>
-      </div>
-    )
-  }
-}
-
-export default App
+export default App;
